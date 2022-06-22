@@ -1,0 +1,73 @@
+from tkinter import *
+from PIL import ImageTk, Image
+import os
+
+class app_tkinter(Tk):
+    def __init__(self):
+        
+        
+        super().__init__()
+        self.frame=Frame(self,width=1000, height=2000).place(x=1, y=1)
+        self.frame_left=Frame(self, width=450, height=800, bg='#AADDE4',  borderwidth = 1,).grid(row=0, column=0)
+        self.frame_right=Frame(self, width=900, height=800,bg='#AAE4D2').grid(row=0, column=1)
+        self.listbox1=Listbox(self,width=50, height=10).place(x=50, y=125)
+        self.check = Checkbutton(self, text="Показать собранные", bg='#AADDE4').place(x=50, y=300)
+        self.check = Checkbutton(self, text="Показать просроченые", bg='#AADDE4').place(x=50, y=325)
+        self.check = Checkbutton(self, text="Сортировать по срочности", bg='#AADDE4').place(x=50, y=350)
+        self.listbox2=Listbox(self,width=50, height=10).place(x=50, y=385)
+        self.check = Checkbutton(self, text="Показать собранные", bg='#AADDE4').place(x=50, y=550)
+        self.check = Checkbutton(self, text="Показать просроченые", bg='#AADDE4').place(x=50, y=575)
+        self.check = Checkbutton(self, text="Сортировать по срочности", bg='#AADDE4').place(x=50, y=600)
+        self.img1=ImageTk.PhotoImage(Image.open("sait.png"))
+        self.title_frame_left=Label(self,image = self.img1).place(x=50, y=650)
+        #self.canvas_frame_left=Canvas(self,width=250, height=350).place(x=50, y=400)
+        #self.canvas_frame_left=Canvas(self,width=250, height=350).place(x=50, y=700)
+        self.scrollbar = Scrollbar(self.frame).grid(row=0, column=3)
+        #self.frame_right=Frame(self.frame_right, width=550, height=350,bg='white').place(x=700, y=325)
+        """self.scroll_y = Scrollbar(self.frame_right, orient=HORIZONTAL).grid(row=1, column=0, sticky=NS)
+        self.config(yscrollcommand=self.scroll_y.set)
+        self.scroll_y.config(command=self.yview)"""
+        #self.canvas_frame_left.create_text(50,50,text='text',fill='blue')
+        #self.frame_left_centr=Frame(self.frame_left,width=250, height=300, bg='#E4AAB1').place(x=50, y=250)
+        #self.entry_frame_left=Entry(self.frame_left,width=250, height=300).place(x=50, y=250)
+        # картинки
+        self.img2=ImageTk.PhotoImage(Image.open("img.png"))
+        self.title_frame_left=Label(self,image = self.img2).place(x=50, y=50)
+        self.img3=ImageTk.PhotoImage(Image.open("m_img_hleb.png"))
+        self.title_frame_left=Label(self,image = self.img3).place(x=870, y=475)
+        self.img1=ImageTk.PhotoImage(Image.open("sait.png"))
+        self.title_frame_left=Label(self,image = self.img1).place(x=50, y=650)
+        self.img4=ImageTk.PhotoImage(Image.open("m_shema.png"))
+        self.title_frame_left=Label(self,image = self.img4).place(x=700, y=50)
+
+        # buttons
+        self.but_right=Button(self, text='>' ,font="Arial 15",width=4, height=2, bg='green', fg='Black', relief = 'flat' ).place(x=500, y=325)
+        self.but_left=Button(self, text='<' ,font="Arial 15",width=4, height=2, bg='green', fg='Black', relief = 'flat' ).place(x=500, y=375)
+        self.but_plus=Button(self, text='+' ,font="Arial 15", width=4, height=2, bg='green', fg='Black',relief = 'flat' ).place(x=500, y=425)
+        self.but_minus=Button(self, text='-' ,font="Arial 15", width=4, height=2, bg='green', fg='Black',relief = 'flat').place(x=500, y=475)
+        self.but_enter=Button(self, text='Собрано' ,font="Arial 25",width=10, height=2, bg='green', fg='Black', relief = 'flat').place(x=400, y=550)
+        # под frame
+        self.title_frame_right_top_left=Label(self,text='Заказ',font="Arial 15",bg='#AAE4D2').place(x=500, y=45)
+        self.title_frame_right_top_right=Label(self,text='Продукт',font="Arial 15",bg='#AAE4D2').place(x=900, y=420)
+        self.title_frame_left_next_centr=Label(self,text='Очередь заказов',font="Arial 15",bg='#AADDE4').place(x=50, y=90)
+        self.title1_frame_right=Label(self,text='Стелаж',font="Arial 10",bg='#AAE4D2').place(x=500, y=100)
+        self.title2_frame_right=Label(self,text='Колонка',font="Arial 10",bg='#AAE4D2').place(x=500, y=130)
+        self.title3_frame_right=Label(self,text='Ярус',font="Arial 10",bg='#AAE4D2').place(x=500, y=160)
+        self.title4_frame_right=Label(self,text='Всего ',font="Arial 10",bg='#AAE4D2').place(x=500, y=190)
+        self.title5_frame_right=Label(self,text='Собрать',font="Arial 10",bg='#AAE4D2').place(x=500, y=220)
+        self.title6_frame_right=Label(self,text='Собрано',font="Arial 10",bg='#AAE4D2').place(x=500, y=250)
+        # entry
+        self.entry_title1=Entry(self,width=5,bg='#AAE4D2', bd=0,font="Arial 10").place(x=620, y=100)
+        self.entry_title2=Entry(self,width=5,bg='#AAE4D2', bd=0,font="Arial 10").place(x=620, y=130)
+        self.entry_title3=Entry(self,width=5,bg='#AAE4D2', bd=0,font="Arial 10").place(x=620, y=160)
+        self.entry_title4=Entry(self,width=5,bg='#AAE4D2', bd=0,font="Arial 10").place(x=620, y=190)
+        self.entry_title5=Entry(self,width=5,bg='#AAE4D2', bd=0,font="Arial 10").place(x=620, y=220)
+        self.entry_title6=Entry(self,width=5,bg='#AAE4D2', bd=0,font="Arial 10").place(x=620, y=250)
+        
+
+
+def main():
+    root= app_tkinter()
+    root.geometry('1280x800')
+    root.mainloop()
+main()
