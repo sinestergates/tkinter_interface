@@ -44,8 +44,8 @@ class BD_insert:
             #entry_i=self.entry_8.get()
             con = psycopg2.connect(
             database="tydb",
-            user="alex",
-            password="123",
+            user="",
+            password="",
             host="localhost",
             port="5432"
             )
