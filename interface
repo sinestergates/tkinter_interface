@@ -21,7 +21,7 @@ class base:
         )
         print("подключение создано")
         qrcode = abc
-        #print("Вы ввели код:%s", qrcode)
+        
         cur = con.cursor()
         cur.execute(
             'SELECT public."OrderWindow".window_id FROM public."OrderWindow", public."OrdersDelivery" WHERE public."OrderWindow".order_id = public."OrdersDelivery".id AND public."OrdersDelivery".orderqr = %s',
@@ -41,7 +41,7 @@ class BD_insert:
                 entry_g=1
             else:
                 entry_g=0
-            #entry_i=self.entry_8.get()
+            
             con = psycopg2.connect(
             database="tydb",
             user="",
@@ -68,31 +68,20 @@ class BD_insert:
         self.root=Tk()
         self.root.geometry('1000x600')
         self.frame=Frame(self.root,width=1000, height=600,bg='#AADDE4').place(x=1, y=1)
-        #self.entry_1=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
-        #self.entry_2=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
         self.entry_3=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
         self.entry_4=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
         self.entry_5=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
         self.entry_6=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
-        #self.entry_7=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
-        #self.entry_8=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
-        #self.title_1=Label(self.root,text='id',font="Arial 15",bg='#AADDE4').place(x=100, y=50)
-        #self.title_2=Label(self.root,text='Order_id',font="Arial 15",bg='#AADDE4').place(x=200, y=50)
         self.title_3=Label(self.root,text='ordername',font="Arial 15",bg='#AADDE4').place(x=100, y=50)
         self.title_4=Label(self.root,text='orderqr',font="Arial 15",bg='#AADDE4').place(x=200, y=50)
         self.title_5=Label(self.root,text='ordertext',font="Arial 15",bg='#AADDE4').place(x=300, y=50)
         self.title_6=Label(self.root,text='orderdate',font="Arial 15",bg='#AADDE4').place(x=400, y=50)
         self.title_7=Label(self.root,text='orderstate',font="Arial 15",bg='#AADDE4').place(x=500, y=50)
-        #self.title_8=Label(self.root,text='ordertime',font="Arial 15",bg='#AADDE4').place(x=800, y=50)
         self.but_enter=Button(self.root,text='ВВОД' ,font="Arial 11",width=5, height=5, bg='green', fg='Black',command=base_run).place(x=20, y=50)
-        #self.entry_1.place(x=100, y=100)
-        #self.entry_2.place(x=200, y=100)
         self.entry_3.place(x=100, y=100)
         self.entry_4.place(x=200, y=100)
         self.entry_5.place(x=300, y=100)
         self.entry_6.place(x=400, y=100)
-        #self.entry_7.place(x=700, y=100)
-        #self.entry_8.place(x=800, y=100)
         self.comboExample = ttk.Combobox(self.root,value=["Готов", "Не готов",])
         self.comboExample.place(x=500, y=100)
         self.comboExample.current(0)
@@ -107,7 +96,6 @@ class app_tkinter(Tk):
         self.frame=Frame(self,width=1000, height=2000).place(x=1, y=1)
         self.frame_left=Frame(self, width=450, height=800, bg='#AADDE4',borderwidth = 1,).grid(row=0, column=0)
         self.frame_right=Frame(self, width=900, height=800,bg='#AAE4D2').grid(row=0, column=1)
-        #self.listbox1=Listbox(self,width=50, height=10).place(x=50, y=125)
         self.check = Checkbutton(self, text="Показать собранные", bg='#AADDE4').place(x=50, y=300)
         self.check = Checkbutton(self, text="Показать просроченые", bg='#AADDE4').place(x=50, y=325)
         self.check = Checkbutton(self, text="Сортировать по срочности", bg='#AADDE4').place(x=50, y=350)
@@ -117,16 +105,8 @@ class app_tkinter(Tk):
         self.check = Checkbutton(self, text="Сортировать по срочности", bg='#AADDE4').place(x=50, y=600)
         self.img1=ImageTk.PhotoImage(Image.open("sait.png"))
         self.title_frame_left=Label(self,image = self.img1).place(x=50, y=650)
-        #self.canvas_frame_left=Canvas(self,width=250, height=350).place(x=50, y=400)
-        #self.canvas_frame_left=Canvas(self,width=250, height=350).place(x=50, y=700)
         self.scrollbar = Scrollbar(self.frame).grid(row=0, column=3)
-        #self.frame_right=Frame(self.frame_right, width=550, height=350,bg='white').place(x=700, y=325)
-        """self.scroll_y = Scrollbar(self.frame_right, orient=HORIZONTAL).grid(row=1, column=0, sticky=NS)
-        self.config(yscrollcommand=self.scroll_y.set)
-        self.scroll_y.config(command=self.yview)"""
-        #self.canvas_frame_left.create_text(50,50,text='text',fill='blue')
-        #self.frame_left_centr=Frame(self.frame_left,width=250, height=300, bg='#E4AAB1').place(x=50, y=250)
-        #self.entry_frame_left=Entry(self.frame_left,width=250, height=300).place(x=50, y=250)
+        
         # картинки
         self.img2=ImageTk.PhotoImage(Image.open("img.png"))
         self.title_frame_left=Label(self,image = self.img2).place(x=50, y=50)
@@ -168,10 +148,10 @@ class app_tkinter(Tk):
        
 def main():
     root= app_tkinter()
-    #insert_listbox ()
+    )
     root.geometry('1280x800')
     root.mainloop()
-    #insert_listbox ()
+   
 if __name__=='__main__':
     
     main()
