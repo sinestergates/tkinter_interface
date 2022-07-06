@@ -1,16 +1,113 @@
 from tkinter import *
 from PIL import ImageTk, Image
 import os
-
-class app_tkinter(Tk):
+import psycopg2
+from tkinter import ttk
+list=['dsad','adsad','sdasd','hfvgdc']
+class base:
+    def __init__(self, name_base,user,password,host):
+        self.name_base=name_base
+        self.user=user
+        self.password=password
+        self.host=host
+        
+        def func_num_window(self,name_base,user,password,host,):
+            con = psycopg2.connect(
+            database=self.name_base,
+            user=user,
+            password=password,
+            host=host,
+            port="5432"
+        )
+        print("подключение создано")
+        qrcode = abc
+        #print("Вы ввели код:%s", qrcode)
+        cur = con.cursor()
+        cur.execute(
+            'SELECT public."OrderWindow".window_id FROM public."OrderWindow", public."OrdersDelivery" WHERE public."OrderWindow".order_id = public."OrdersDelivery".id AND public."OrdersDelivery".orderqr = %s',
+            (qrcode,))
+        a = cur.fetchall()
+        get_window = a[0]
+class BD_insert:
     def __init__(self):
         
+        def base_run():
+            entry_c=self.entry_3.get()
+            entry_d=self.entry_4.get()
+            entry_e=self.entry_5.get()
+            entry_f=self.entry_6.get()
+            entry_g=self.comboExample.get()
+            if entry_g=='Готов':
+                entry_g=1
+            else:
+                entry_g=0
+            #entry_i=self.entry_8.get()
+            con = psycopg2.connect(
+            database="tydb",
+            user="alex",
+            password="123",
+            host="localhost",
+            port="5432"
+            )
+            print("подключение создано")
         
+            cur = con.cursor()
+            cur.execute('SELECT COUNT(id) from "OrdersDelivery" where id=id')
+            num_id=cur.fetchall()[0][0]
+            num_id_plus=num_id+1
+            print(num_id)
+            cur.execute(
+                'INSERT INTO "OrdersDelivery" (id,"Order_id", ordername, orderqr, ordertext, orderdate, orderstate) VALUES (%s,%s,%s,%s,%s,%s,%s)',(num_id_plus,num_id_plus,entry_c,entry_d,entry_e,entry_f,entry_g))
+           
+            
+            con.commit()
+            print("строка добавлена в базу данных")
+           
+
+            
+        self.root=Tk()
+        self.root.geometry('1000x600')
+        self.frame=Frame(self.root,width=1000, height=600,bg='#AADDE4').place(x=1, y=1)
+        #self.entry_1=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
+        #self.entry_2=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
+        self.entry_3=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
+        self.entry_4=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
+        self.entry_5=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
+        self.entry_6=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
+        #self.entry_7=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
+        #self.entry_8=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
+        #self.title_1=Label(self.root,text='id',font="Arial 15",bg='#AADDE4').place(x=100, y=50)
+        #self.title_2=Label(self.root,text='Order_id',font="Arial 15",bg='#AADDE4').place(x=200, y=50)
+        self.title_3=Label(self.root,text='ordername',font="Arial 15",bg='#AADDE4').place(x=100, y=50)
+        self.title_4=Label(self.root,text='orderqr',font="Arial 15",bg='#AADDE4').place(x=200, y=50)
+        self.title_5=Label(self.root,text='ordertext',font="Arial 15",bg='#AADDE4').place(x=300, y=50)
+        self.title_6=Label(self.root,text='orderdate',font="Arial 15",bg='#AADDE4').place(x=400, y=50)
+        self.title_7=Label(self.root,text='orderstate',font="Arial 15",bg='#AADDE4').place(x=500, y=50)
+        #self.title_8=Label(self.root,text='ordertime',font="Arial 15",bg='#AADDE4').place(x=800, y=50)
+        self.but_enter=Button(self.root,text='ВВОД' ,font="Arial 11",width=5, height=5, bg='green', fg='Black',command=base_run).place(x=20, y=50)
+        #self.entry_1.place(x=100, y=100)
+        #self.entry_2.place(x=200, y=100)
+        self.entry_3.place(x=100, y=100)
+        self.entry_4.place(x=200, y=100)
+        self.entry_5.place(x=300, y=100)
+        self.entry_6.place(x=400, y=100)
+        #self.entry_7.place(x=700, y=100)
+        #self.entry_8.place(x=800, y=100)
+        self.comboExample = ttk.Combobox(self.root,value=["Готов", "Не готов",])
+        self.comboExample.place(x=500, y=100)
+        self.comboExample.current(0)
+            
+        
+            
+class app_tkinter(Tk):
+    def __init__(self):
+                
         super().__init__()
+        self.listbox=Listbox()
         self.frame=Frame(self,width=1000, height=2000).place(x=1, y=1)
-        self.frame_left=Frame(self, width=450, height=800, bg='#AADDE4',  borderwidth = 1,).grid(row=0, column=0)
+        self.frame_left=Frame(self, width=450, height=800, bg='#AADDE4',borderwidth = 1,).grid(row=0, column=0)
         self.frame_right=Frame(self, width=900, height=800,bg='#AAE4D2').grid(row=0, column=1)
-        self.listbox1=Listbox(self,width=50, height=10).place(x=50, y=125)
+        #self.listbox1=Listbox(self,width=50, height=10).place(x=50, y=125)
         self.check = Checkbutton(self, text="Показать собранные", bg='#AADDE4').place(x=50, y=300)
         self.check = Checkbutton(self, text="Показать просроченые", bg='#AADDE4').place(x=50, y=325)
         self.check = Checkbutton(self, text="Сортировать по срочности", bg='#AADDE4').place(x=50, y=350)
@@ -39,13 +136,14 @@ class app_tkinter(Tk):
         self.title_frame_left=Label(self,image = self.img1).place(x=50, y=650)
         self.img4=ImageTk.PhotoImage(Image.open("m_shema.png"))
         self.title_frame_left=Label(self,image = self.img4).place(x=700, y=50)
-
+        
         # buttons
-        self.but_right=Button(self, text='>' ,font="Arial 15",width=4, height=2, bg='green', fg='Black', relief = 'flat' ).place(x=500, y=325)
+        self.but_right=Button(self, text='>',font="Arial 15",width=4, height=2, bg='green', fg='Black', relief = 'flat' ).place(x=500, y=325)
         self.but_left=Button(self, text='<' ,font="Arial 15",width=4, height=2, bg='green', fg='Black', relief = 'flat' ).place(x=500, y=375)
         self.but_plus=Button(self, text='+' ,font="Arial 15", width=4, height=2, bg='green', fg='Black',relief = 'flat' ).place(x=500, y=425)
         self.but_minus=Button(self, text='-' ,font="Arial 15", width=4, height=2, bg='green', fg='Black',relief = 'flat').place(x=500, y=475)
         self.but_enter=Button(self, text='Собрано' ,font="Arial 25",width=10, height=2, bg='green', fg='Black', relief = 'flat').place(x=400, y=550)
+        self.but_enter=Button(self, text='добавление\nв БД' ,font="Arial 25",width=10, height=2, bg='green', fg='Black', relief = 'flat',command=BD_insert).place(x=1050, y=550)
         # под frame
         self.title_frame_right_top_left=Label(self,text='Заказ',font="Arial 15",bg='#AAE4D2').place(x=500, y=45)
         self.title_frame_right_top_right=Label(self,text='Продукт',font="Arial 15",bg='#AAE4D2').place(x=900, y=420)
@@ -63,11 +161,18 @@ class app_tkinter(Tk):
         self.entry_title4=Entry(self,width=5,bg='#AAE4D2', bd=0,font="Arial 10").place(x=620, y=190)
         self.entry_title5=Entry(self,width=5,bg='#AAE4D2', bd=0,font="Arial 10").place(x=620, y=220)
         self.entry_title6=Entry(self,width=5,bg='#AAE4D2', bd=0,font="Arial 10").place(x=620, y=250)
-        
-
-
+        list_box=Listbox(width=50, height=10)
+        list_box.place(x=50, y=125)
+        for i in list:
+            list_box.insert(0,i)
+       
 def main():
     root= app_tkinter()
+    #insert_listbox ()
     root.geometry('1280x800')
     root.mainloop()
-main()
+    #insert_listbox ()
+if __name__=='__main__':
+    
+    main()
+   
