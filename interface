@@ -1,9 +1,25 @@
 from tkinter import *
 from PIL import ImageTk, Image
+import time
 import os
 import psycopg2
+import tkinter as tk
 from tkinter import ttk
 list=['dsad','adsad','sdasd','hfvgdc']
+
+def connect_db():
+    cn = psycopg2.connect(
+        database="tydb",
+        user="alex",
+        password="123",
+        host="localhost",
+        port="5432"
+        )
+    print("подключение создано")
+    return cn 
+        
+       
+
 class base:
     def __init__(self, name_base,user,password,host):
         self.name_base=name_base
@@ -11,82 +27,294 @@ class base:
         self.password=password
         self.host=host
         
-        def func_num_window(self,name_base,user,password,host,):
-            con = psycopg2.connect(
-            database=self.name_base,
-            user=user,
-            password=password,
-            host=host,
-            port="5432"
-        )
-        print("подключение создано")
-        qrcode = abc
+        con = connect_db()
         
+        qrcode = abc
+        #print("Вы ввели код:%s", qrcode)
         cur = con.cursor()
         cur.execute(
             'SELECT public."OrderWindow".window_id FROM public."OrderWindow", public."OrdersDelivery" WHERE public."OrderWindow".order_id = public."OrdersDelivery".id AND public."OrdersDelivery".orderqr = %s',
             (qrcode,))
         a = cur.fetchall()
         get_window = a[0]
-class BD_insert:
-    def __init__(self):
         
+        con.close()
+        
+'''class menu:
+    def __init__(self):
+        self.root=Tk()
+        self.root.geometry('300x200')
+        self.but_BD_insert=Button(self.root, text='Добавление\nQR',font="Arial 15",width=10, height=2, bg='green', fg='Black', relief = 'flat',command=BD_insert).place(x=50, y=50)'''
+class BD_insert_products(Tk):
+    def __init__(self):
+        entr_save=[]
+        title_list=["ProductName", "ProductDescr", "SizeWidth", "SizeHeight", "SizeDepth", "OnlyTop", "BarCode", "Weight", "ProductPhoto"]
+        title_tree=["id", "ProductName", "ProductDescr", "SizeWidth", "SizeHeight", "SizeDepth", "OnlyTop", "BarCode", "Weight", "ProductPhoto"]
+        super().__init__()
+        self.geometry('1000x600')
+        
+        def treeview():
+            columns = ["1", "#2", "#3","#4","#5","#6","#7","#8","#9","#10"]
+            #title_tree=['id', 'Orderid', 'ordername', 'orderqr', 'ordertext', 'orderdate', 'orderstate', 'ordertime']
+            self.tree = ttk.Treeview(self, show="headings", columns=columns)   
+            ysb = ttk.Scrollbar(self, orient=VERTICAL, command=self.tree.yview)
+            self.tree.configure(yscroll=ysb.set)
+            self.tree.place(x=20, y=200)
+                #self.tree.column(width=100, stretch=NO)
+            for i in range(len(title_tree)):
+                self.tree.column(columns[i],width=90, stretch=NO)
+                self.tree.heading(columns[i], text=title_tree[i])
+            con = connect_db()
+            
+            
+            
+            cur = con.cursor()
+            cur.execute('SELECT * FROM "Product"')
+            nas=cur.fetchall()
+            #print(nas)
+                
+            for i in range(len(nas)):
+                a=nas[i]
+                self.tree.insert("", tk.END, values=a)
+            id_num=[]
+            
+            def update_base_row():
+                list_colum=["ProductName", "ProductDescr", "SizeWidth", "SizeHeight", "SizeDepth", "OnlyTop", "BarCode", "Weight", "ProductPhoto"]
+                #entry_g=self.comboExample.get()
+                con = connect_db()
+                
+                cur = con.cursor()
+                
+                for i in range(len(list_colum)):
+                    a=list_colum[i]
+                    
+                    
+                    b=entr_save[i].get()
+                    cur.execute(
+                    f'UPDATE "Product" set {a} = %s where id =%s',(b,id_num[0],))
+                    con.commit()  
+                
+                    print("строка обновлена в базе данных")
+                    stri=(f'строка обновлена')
+                    self.entry_a.insert(0,stri)
+                    treeview()
+
+            def insert_tree_in_Entry(event_a):
+                try:
+                    for i in range(len(entr_save)):
+                        entr_save[i].delete(0, END)
+                    for a in self.tree.selection():
+                        
+                        b=self.tree.item(a)['values']
+                        for i in range(len(b)):
+                            
+                            
+                            entr_save[i].insert(END,b[i])
+                except IndexError :
+                    print('хер тебе')
+                    pass
+                        
+                    
+            def select(event):
+                for i in self.tree.selection():
+                    a=self.tree.item(i)['values'][0]
+                    id_num.append(a)
+                    print(a)
+                    print(id_num)
+                    
+            def delete_base_row():
+                print(id_num)
+                con = connect_db()
+                
+                cur = con.cursor()
+                cur.execute('DELETE from "Product" where id=%s',(id_num[0],))
+                con.commit()
+                stri=(f'строка удалена')
+                self.entry_a.insert(0,stri)
+                treeview()
+                #time.sleep(2)
+                #self.entry_a.delete(0, 'end')
+            self.tree.bind("<<TreeviewSelect>>", select)    
+            #self.tree.bind("<<TreeviewSelect>>", insert_tree_in_Entry)
+            self.but_enter2=Button(self,text='редактировать' ,font="Arial 11",width=12, height=2, bg='green', fg='Black',command=update_base_row).place(x=150, y=150)
+            self.but_enter2=Button(self,text='УДАЛИТЬ' ,font="Arial 11",width=10, height=1, bg='green', fg='Black',command=delete_base_row).place(x=800, y=450)
+
         def base_run():
-            entry_c=self.entry_3.get()
-            entry_d=self.entry_4.get()
-            entry_e=self.entry_5.get()
-            entry_f=self.entry_6.get()
+            
+            con = connect_db()
+            
+            cur = con.cursor()
+            cur.execute('SELECT count(*) AS exact_count FROM "Product"')  #('SELECT COUNT(id) from "OrdersDelivery" where id=id')
+            num_id=cur.fetchall()[0][0]
+            num_id_plus=num_id+1
+            print(num_id)
+            cur.execute(
+                'INSERT INTO "Product" (id, "ProductName", "ProductDescr", "SizeWidth", "SizeHeight", "SizeDepth", "OnlyTop", "BarCode", "Weight", "ProductPhoto") VALUES (DEFAULT,%s,%s,%s,%s,%s,%s,%s,%s,%s)',(entr_save[0].get(),entr_save[1].get(),entr_save[2].get(),entr_save[3].get(),entr_save[4].get(),entr_save[5].get(),entr_save[6].get(),entr_save[7].get(),entr_save[8].get(),))
+               
+            
+            
+            con.commit()
+            print("строка добавлена в базу данных")
+            
+                
+            treeview()   
+
+        def entry_сreate():
+            for i in range(0,9,1):
+                a=self.entry_i=Entry(self,width=10,bg='white', bd=0,font="Arial 10")
+                self.entry_i.place(x=20+(i*100), y=100)
+                entr_save.append(a)
+                
+        self.frame=Frame(self,width=1000, height=600,bg='#AADDE4').place(x=1, y=1)
+        
+        self.entry_a=Entry(self,width=13,bg='white', bd=0,font="Arial 10")
+        self.entry_a.place(x=500, y=450)
+        
+        for i in range(len(title_list)):
+            #title_tree.remove("id")
+            a=title_list[i]
+            self.title_i=Label(self,text=a,font="Arial 10",bg='#AADDE4').place(x=20+(i*100), y=50)
+        '''self.title_3=Label(self,text='ordername',font="Arial 15",bg='#AADDE4').place(x=100, y=50)
+        self.title_4=Label(self,text='orderqr',font="Arial 15",bg='#AADDE4').place(x=200, y=50)
+        self.title_5=Label(self,text='ordertext',font="Arial 15",bg='#AADDE4').place(x=300, y=50)
+        self.title_6=Label(self,text='orderdate',font="Arial 15",bg='#AADDE4').place(x=400, y=50)
+        self.title_7=Label(self,text='orderstate',font="Arial 15",bg='#AADDE4').place(x=500, y=50)'''
+        #self.but_enter2=Button(self,text='редактировать' ,font="Arial 11",width=12, height=2, bg='green', fg='Black',command=update_base_row).place(x=650, y=100)
+        #self.but_enter2=Button(self,text='УДАЛИТЬ' ,font="Arial 11",width=10, height=1, bg='green', fg='Black',command=delete_base_row).place(x=800, y=450)
+        self.but_enter=Button(self,text='добавить' ,font="Arial 11",width=7, height=2, bg='green', fg='Black',command=base_run).place(x=20, y=150)
+        self.but_enter=Button(self,text='ОБНОВИТЬ' ,font="Arial 11",width=10, height=1, bg='green', fg='Black',command=treeview).place(x=900, y=450)
+        
+        #self.comboExample = ttk.Combobox(self,value=["Готов", "Не готов",])
+        #self.comboExample.place(x=500, y=100)
+        #self.comboExample.current(0)
+        treeview()   
+        entry_сreate()
+
+class BD_insert(Tk):
+    def __init__(self):
+        entr_save=[]
+        
+        super().__init__()
+        self.geometry('1000x600')
+        
+        def treeview():
+            columns = ["1", "#2", "#3","#4","#5","#6","#7","#8"]
+            title_tree=['id', 'Orderid', 'ordername', 'orderqr', 'ordertext', 'orderdate', 'orderstate', 'ordertime']
+            self.tree = ttk.Treeview(self, show="headings", columns=columns)   
+            ysb = ttk.Scrollbar(self, orient=VERTICAL, command=self.tree.yview)
+            self.tree.configure(yscroll=ysb.set)
+            self.tree.place(x=20, y=200)
+                #self.tree.column(width=100, stretch=NO)
+            for i in range(len(title_tree)):
+                self.tree.column(columns[i],width=120, stretch=NO)
+                self.tree.heading(columns[i], text=title_tree[i])
+            con = connect_db()
+            
+            
+            
+            cur = con.cursor()
+            cur.execute('SELECT * FROM "OrdersDelivery"')
+            nas=cur.fetchall()
+                #print(nas)
+                
+            for i in range(len(nas)):
+                a=nas[i]
+                self.tree.insert("", tk.END, values=a)
+            id_num=[]
+            
+            def update_base_row():
+                list_colum=['ordername', 'orderqr', 'ordertext', 'orderdate', 'orderstate']
+                entry_g=self.comboExample.get()
+                con = connect_db()
+                
+                cur = con.cursor()
+                for i in range(len(list_colum)):
+                    a=list_colum[i]
+                    
+                    
+                    b=entr_save[i].get()
+                    cur.execute(
+                    f'UPDATE "OrdersDelivery" set {a} = %s where id =%s',(b,id_num[0],))
+                    con.commit()  
+                
+                    print("строка обновлена в базе данных")
+                    stri=(f'строка обновлена')
+                    self.entry_a.insert(0,stri)
+                    treeview()
+                    
+            def select(event):
+                for i in self.tree.selection():
+                    a=self.tree.item(i)['values'][0]
+                    id_num.append(a)
+                    print(a)
+                    print(id_num)
+                    
+            def delete_base_row():                
+                con = connect_db()
+                
+                cur = con.cursor()
+                cur.execute('DELETE from "OrdersDelivery" where id=%s',(id_num[0],))
+                con.commit()
+                stri=(f'строка удалена')
+                self.entry_a.insert(0,stri)
+                treeview()
+                #time.sleep(2)
+                #self.entry_a.delete(0, 'end')
+                
+            self.tree.bind("<<TreeviewSelect>>", select)
+            self.but_enter2=Button(self,text='редактировать' ,font="Arial 11",width=12, height=2, bg='green', fg='Black',command=update_base_row).place(x=650, y=100)
+            self.but_enter2=Button(self,text='УДАЛИТЬ' ,font="Arial 11",width=10, height=1, bg='green', fg='Black',command=delete_base_row).place(x=800, y=450)
+
+        def base_run():
             entry_g=self.comboExample.get()
             if entry_g=='Готов':
                 entry_g=1
             else:
                 entry_g=0
+                #entry_i=self.entry_8.get()
+            con = connect_db()
             
-            con = psycopg2.connect(
-            database="tydb",
-            user="",
-            password="",
-            host="localhost",
-            port="5432"
-            )
-            print("подключение создано")
-        
             cur = con.cursor()
-            cur.execute('SELECT COUNT(id) from "OrdersDelivery" where id=id')
+            cur.execute('SELECT count(*) AS exact_count FROM "OrdersDelivery"')  #('SELECT COUNT(id) from "OrdersDelivery" where id=id')
             num_id=cur.fetchall()[0][0]
             num_id_plus=num_id+1
             print(num_id)
             cur.execute(
-                'INSERT INTO "OrdersDelivery" (id,"Order_id", ordername, orderqr, ordertext, orderdate, orderstate) VALUES (%s,%s,%s,%s,%s,%s,%s)',(num_id_plus,num_id_plus,entry_c,entry_d,entry_e,entry_f,entry_g))
-           
+                'INSERT INTO "OrdersDelivery" (id,"Order_id", ordername, orderqr, ordertext, orderdate, orderstate) VALUES (%s,%s,%s,%s,%s,%s,%s)',(num_id_plus,num_id_plus,entr_save[0].get(),entr_save[1].get(),entr_save[2].get(),entr_save[3].get(),entry_g))
+               
+            
             
             con.commit()
             print("строка добавлена в базу данных")
-           
-
             
-        self.root=Tk()
-        self.root.geometry('1000x600')
-        self.frame=Frame(self.root,width=1000, height=600,bg='#AADDE4').place(x=1, y=1)
-        self.entry_3=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
-        self.entry_4=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
-        self.entry_5=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
-        self.entry_6=Entry(self.root,width=10,bg='white', bd=0,font="Arial 10")
-        self.title_3=Label(self.root,text='ordername',font="Arial 15",bg='#AADDE4').place(x=100, y=50)
-        self.title_4=Label(self.root,text='orderqr',font="Arial 15",bg='#AADDE4').place(x=200, y=50)
-        self.title_5=Label(self.root,text='ordertext',font="Arial 15",bg='#AADDE4').place(x=300, y=50)
-        self.title_6=Label(self.root,text='orderdate',font="Arial 15",bg='#AADDE4').place(x=400, y=50)
-        self.title_7=Label(self.root,text='orderstate',font="Arial 15",bg='#AADDE4').place(x=500, y=50)
-        self.but_enter=Button(self.root,text='ВВОД' ,font="Arial 11",width=5, height=5, bg='green', fg='Black',command=base_run).place(x=20, y=50)
-        self.entry_3.place(x=100, y=100)
-        self.entry_4.place(x=200, y=100)
-        self.entry_5.place(x=300, y=100)
-        self.entry_6.place(x=400, y=100)
-        self.comboExample = ttk.Combobox(self.root,value=["Готов", "Не готов",])
+                
+            treeview()   
+
+        def entry_сreate():
+            for i in range(0,4,1):
+                a=self.entry_i=Entry(self,width=10,bg='white', bd=0,font="Arial 10")
+                self.entry_i.place(x=100+(i*100), y=100)
+                entr_save.append(a)
+                
+        self.frame=Frame(self,width=1000, height=600,bg='#AADDE4').place(x=1, y=1)
+        
+        self.entry_a=Entry(self,width=13,bg='white', bd=0,font="Arial 10")
+        self.entry_a.place(x=500, y=450)
+        self.title_3=Label(self,text='ordername',font="Arial 15",bg='#AADDE4').place(x=100, y=50)
+        self.title_4=Label(self,text='orderqr',font="Arial 15",bg='#AADDE4').place(x=200, y=50)
+        self.title_5=Label(self,text='ordertext',font="Arial 15",bg='#AADDE4').place(x=300, y=50)
+        self.title_6=Label(self,text='orderdate',font="Arial 15",bg='#AADDE4').place(x=400, y=50)
+        self.title_7=Label(self,text='orderstate',font="Arial 15",bg='#AADDE4').place(x=500, y=50)
+        #self.but_enter2=Button(self,text='редактировать' ,font="Arial 11",width=12, height=2, bg='green', fg='Black',command=update_base_row).place(x=650, y=100)
+        #self.but_enter2=Button(self,text='УДАЛИТЬ' ,font="Arial 11",width=10, height=1, bg='green', fg='Black',command=delete_base_row).place(x=800, y=450)
+        self.but_enter=Button(self,text='добавить' ,font="Arial 11",width=7, height=2, bg='green', fg='Black',command=base_run).place(x=20, y=100)
+        self.but_enter=Button(self,text='ОБНОВИТЬ' ,font="Arial 11",width=10, height=1, bg='green', fg='Black',command=treeview).place(x=900, y=450)
+        
+        self.comboExample = ttk.Combobox(self,value=["Готов", "Не готов",])
         self.comboExample.place(x=500, y=100)
         self.comboExample.current(0)
-            
-        
+        treeview()   
+        entry_сreate()
             
 class app_tkinter(Tk):
     def __init__(self):
@@ -96,6 +324,7 @@ class app_tkinter(Tk):
         self.frame=Frame(self,width=1000, height=2000).place(x=1, y=1)
         self.frame_left=Frame(self, width=450, height=800, bg='#AADDE4',borderwidth = 1,).grid(row=0, column=0)
         self.frame_right=Frame(self, width=900, height=800,bg='#AAE4D2').grid(row=0, column=1)
+        #self.listbox1=Listbox(self,width=50, height=10).place(x=50, y=125)
         self.check = Checkbutton(self, text="Показать собранные", bg='#AADDE4').place(x=50, y=300)
         self.check = Checkbutton(self, text="Показать просроченые", bg='#AADDE4').place(x=50, y=325)
         self.check = Checkbutton(self, text="Сортировать по срочности", bg='#AADDE4').place(x=50, y=350)
@@ -105,8 +334,16 @@ class app_tkinter(Tk):
         self.check = Checkbutton(self, text="Сортировать по срочности", bg='#AADDE4').place(x=50, y=600)
         self.img1=ImageTk.PhotoImage(Image.open("sait.png"))
         self.title_frame_left=Label(self,image = self.img1).place(x=50, y=650)
+        #self.canvas_frame_left=Canvas(self,width=250, height=350).place(x=50, y=400)
+        #self.canvas_frame_left=Canvas(self,width=250, height=350).place(x=50, y=700)
         self.scrollbar = Scrollbar(self.frame).grid(row=0, column=3)
-        
+        #self.frame_right=Frame(self.frame_right, width=550, height=350,bg='white').place(x=700, y=325)
+        """self.scroll_y = Scrollbar(self.frame_right, orient=HORIZONTAL).grid(row=1, column=0, sticky=NS)
+        self.config(yscrollcommand=self.scroll_y.set)
+        self.scroll_y.config(command=self.yview)"""
+        #self.canvas_frame_left.create_text(50,50,text='text',fill='blue')
+        #self.frame_left_centr=Frame(self.frame_left,width=250, height=300, bg='#E4AAB1').place(x=50, y=250)
+        #self.entry_frame_left=Entry(self.frame_left,width=250, height=300).place(x=50, y=250)
         # картинки
         self.img2=ImageTk.PhotoImage(Image.open("img.png"))
         self.title_frame_left=Label(self,image = self.img2).place(x=50, y=50)
@@ -123,7 +360,8 @@ class app_tkinter(Tk):
         self.but_plus=Button(self, text='+' ,font="Arial 15", width=4, height=2, bg='green', fg='Black',relief = 'flat' ).place(x=500, y=425)
         self.but_minus=Button(self, text='-' ,font="Arial 15", width=4, height=2, bg='green', fg='Black',relief = 'flat').place(x=500, y=475)
         self.but_enter=Button(self, text='Собрано' ,font="Arial 25",width=10, height=2, bg='green', fg='Black', relief = 'flat').place(x=400, y=550)
-        self.but_enter=Button(self, text='добавление\nв БД' ,font="Arial 25",width=10, height=2, bg='green', fg='Black', relief = 'flat',command=BD_insert).place(x=1050, y=550)
+        self.but_enter=Button(self, text='ввод\nQR' ,font="Arial 15",width=10, height=2, bg='green', fg='Black', relief = 'flat',command=BD_insert).place(x=1100, y=590)
+        self.but_enter1=Button(self, text='продукты' ,font="Arial 15",width=10, height=2, bg='green', fg='Black', relief = 'flat',command=BD_insert_products).place(x=1100, y=490)
         # под frame
         self.title_frame_right_top_left=Label(self,text='Заказ',font="Arial 15",bg='#AAE4D2').place(x=500, y=45)
         self.title_frame_right_top_right=Label(self,text='Продукт',font="Arial 15",bg='#AAE4D2').place(x=900, y=420)
@@ -146,13 +384,17 @@ class app_tkinter(Tk):
         for i in list:
             list_box.insert(0,i)
        
+        
+        
+
+
 def main():
     root= app_tkinter()
-    )
     root.geometry('1280x800')
     root.mainloop()
-   
+    #insert_listbox ()
 if __name__=='__main__':
-    
-    main()
-   
+    try: 
+        main()
+    except:
+       pass
