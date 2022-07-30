@@ -309,11 +309,7 @@ class ProductStore_insert(Tk):
                                      command=delete_base_row).place(x=850, y=428)
 
         def base_run():
-            '''entry_g=self.comboExample.get()
-            if entry_g=='Готов':
-                entry_g=1
-            else:
-                entry_g=0'''
+           
             # entry_i=self.entry_8.get()
             con = connect_db()
 
@@ -367,25 +363,6 @@ class ProductStore_insert(Tk):
         title_create()
 
 
-'''class base:
-    def __init__(self, name_base, user, password, host):
-        self.name_base = name_base
-        self.user = user
-        self.password = password
-        self.host = host
-
-        con = connect_db()
-
-        qrcode = abc
-        # print("Вы ввели код:%s", qrcode)
-        cur = con.cursor()
-        cur.execute(
-            'SELECT public."OrderWindow".window_id FROM public."OrderWindow", public."OrdersDelivery" WHERE public."OrderWindow".order_id = public."OrdersDelivery".id AND public."OrdersDelivery".orderqr = %s',
-            (qrcode,))
-        a = cur.fetchall()
-        get_window = a[0]
-
-        con.close()'''
 
 
 class BD_insert_products(Tk):
